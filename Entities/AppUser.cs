@@ -1,10 +1,10 @@
-﻿namespace EcommerceBackend.Entities
+﻿using Microsoft.AspNetCore.Identity;
+namespace EcommerceBackend.Entities
 {
-    public class AppUser
+    //build AppUser Class its inherit from IdentityUser class and add some properties like Age and Address  
+    public class AppUser : IdentityUser
     {   
-        private static int _nextUserId = 1; // Static field to keep track of the next user ID
-        public  int UserId { get; set; }  
-        public string UserName { get; set; } = string.Empty;
+   
         private int _Age;
         public string Address { get; set; } = string.Empty;
 
@@ -22,17 +22,12 @@
         }
         public AppUser(string userName, int age, string address)
         {
-            UserId = _nextUserId++; // Assign the next user ID and increment it
             UserName = userName;
             Age = age; // This will invoke the Age property setter and validate the age
             Address = address;
         }
         public AppUser()
         {
-            UserId = _nextUserId++; // Assign the next user ID and increment it
-            UserName = "Unknown";
-            Age = 15;
-            Address = string.Empty;
         }
     }
 }
