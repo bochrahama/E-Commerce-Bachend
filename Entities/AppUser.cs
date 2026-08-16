@@ -20,12 +20,8 @@ namespace EcommerceBackend.Entities
                 _Age = value;
             }
         }
-        public AppUser(string userName, int age, string address)
-        {
-            UserName = userName;
-            Age = age; // This will invoke the Age property setter and validate the age
-            Address = address;
-        }
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Cart> Carts { get; set; } = new List<Cart>();
         public AppUser()
         {
         }

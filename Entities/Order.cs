@@ -8,12 +8,14 @@ namespace EcommerceBackend.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string OrderNumber { get; set; } = Guid.NewGuid().ToString();
-        public Guid UserId { get; set; }
+        //UserId type is string because it is the primary key of the AspNetUsers table which is of type string
+        public string UserId { get; set; } = string.Empty;
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();
         public decimal TotalAmount => CalculateTotal();
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
+        public AppUser AppUser { get; set; } = new AppUser();
         public Order() { }
 
         private decimal CalculateTotal()
