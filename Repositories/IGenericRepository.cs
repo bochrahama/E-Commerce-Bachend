@@ -14,7 +14,7 @@
         // Retrieves all entities of type T from the data store asynchronously.
         Task<IEnumerable<T>> GetAllAsync();
         // Adds a new entity of type T to the data store asynchronously.
-        Task AddSync(T entity);
+        Task AddAsync(T entity);
         // Updates an existing entity of type T in the data store asynchronously.
         void Update(T entity);
         // Removes an entity of type T from the data store asynchronously.
