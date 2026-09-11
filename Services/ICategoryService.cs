@@ -1,4 +1,5 @@
-﻿using EcommerceBackend.Entities;
+﻿//build the interface for the category service
+using EcommerceBackend.Entities;
 namespace EcommerceBackend.Services
 {
     
@@ -6,7 +7,7 @@ namespace EcommerceBackend.Services
     {
         Task<IEnumerable<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(int id);
-        Task<Category> CtreatAsync(Category category);
+        Task<Category> CreateAsync(Category category);
         Task<bool> UpdateAsync(Category category);
         Task<bool> DeleteAsync(int id);
     }

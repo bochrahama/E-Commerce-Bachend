@@ -1,4 +1,5 @@
-﻿using EcommerceBackend.Repositories;
+﻿//build the service layer for the category entity, which will be used to handle business logic and interact with the repository layer. The service layer will provide methods for creating, reading, updating, and deleting categories.
+using EcommerceBackend.Repositories;
 using EcommerceBackend.Entities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.VisualBasic;
