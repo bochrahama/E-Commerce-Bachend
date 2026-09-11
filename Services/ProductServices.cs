@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//build the service layer for the product entity, which will be used to handle business logic and interact with the repository layer. The service layer will provide methods for creating, reading, updating, and deleting products.
+using Microsoft.EntityFrameworkCore;
 using EcommerceBackend.Data;
 using EcommerceBackend.Entities;
 namespace EcommerceBackend.Services
