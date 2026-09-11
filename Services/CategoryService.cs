@@ -12,7 +12,7 @@ namespace EcommerceBackend.Services
         public CategoryService(IGenericRepository<Category, int> repo) { _repo = repo; }
         public Task<IEnumerable<Category>> GetAllAsync() => _repo.GetAllAsync();
         public Task<Category?> GetByIdAsync(int id) => _repo.GetByIdAsync(id);
-        public async Task<Category> CtreatAsync(Category category)
+        public async Task<Category> CreateAsync(Category category)
         {
             await _repo.AddAsync(category);
             await _repo.SaveChangesAsync();
