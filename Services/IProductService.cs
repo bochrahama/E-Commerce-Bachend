@@ -1,4 +1,5 @@
-﻿using EcommerceBackend.Entities;
+﻿//build the interface for the product service
+using EcommerceBackend.Entities;
 namespace EcommerceBackend.Services
 {
     public interface IProductService
