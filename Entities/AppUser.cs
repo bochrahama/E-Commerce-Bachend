@@ -3,8 +3,9 @@ namespace EcommerceBackend.Entities
 {
     //build AppUser Class its inherit from IdentityUser class and add some properties like Age and Address  
     public class AppUser : IdentityUser
-    {   
-   
+    {
+
+        public string FullName { get; set; } = string.Empty;
         private int _Age;
         public string Address { get; set; } = string.Empty;
 
