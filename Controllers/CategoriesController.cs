@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EcommerceBackend.Services;
 using EcommerceBackend.Entities;
+using Microsoft.AspNetCore.Authorization;
+using EcommerceBackend.DTOs;
 namespace EcommerceBackend.Controllers
 {
     //build the controller for the category entity, which will be used to handle HTTP requests and responses
@@ -24,6 +26,7 @@ namespace EcommerceBackend.Controllers
             return Ok(categories);
         }
         [HttpGet("{id:int}")]
+        
         //this method is used to get a category by its id 
         public async Task<IActionResult> GetById(int id) {
             var category = await _categoryService.GetByIdAsync(id);
@@ -34,6 +37,7 @@ namespace EcommerceBackend.Controllers
             return Ok(category);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Category category)
         {
             var createdCategory = await _categoryService.CreateAsync(category);
@@ -41,6 +45,7 @@ namespace EcommerceBackend.Controllers
         }
         [HttpPut("{id:int}")]
         //this method is used to update a category by its id
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, Category category)
         {
             if (id != category.Id)
@@ -57,6 +62,7 @@ namespace EcommerceBackend.Controllers
         }
         [HttpDelete("{id:int}")]
         //this method is used to delete a category by its id
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _categoryService.DeleteAsync(id);
