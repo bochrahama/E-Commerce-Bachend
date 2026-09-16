@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EcommerceBackend.Services;
 using EcommerceBackend.Entities;
+using EcommerceBackend.DTOs;
+using Microsoft.AspNetCore.Authorization;
 namespace EcommerceBackend.Controllers
 {
     [ApiController]
@@ -33,12 +35,14 @@ namespace EcommerceBackend.Controllers
             return Ok(product);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Product product)
         {
             var createdProduct = await _productService.CreatAsync(product);
             return CreatedAtAction(nameof(GetById), new { id = createdProduct.ProductId }, createdProduct);
         }
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, Product product)
         {
             if (id != product.ProductId)
@@ -53,6 +57,7 @@ namespace EcommerceBackend.Controllers
             return Ok(updatedProduct);
         }
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _productService.DeleteAsync(id);
