@@ -9,7 +9,7 @@ namespace EcommerceBackend.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        public readonly IProductService _productService;
+        private readonly IProductService _productService;
         public ProductsController(IProductService productService)
         {
             _productService = productService;
@@ -49,7 +49,7 @@ namespace EcommerceBackend.Controllers
             {
                 return BadRequest();
             }
-            var updatedProduct = await _productService.UpdateAsync(product);
+            var  updatedProduct = await _productService.UpdateAsync(product);
             if (updatedProduct == null)
             {
                 return NotFound();

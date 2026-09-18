@@ -14,7 +14,7 @@ namespace EcommerceBackend.Controllers
     //It provides the basic functionality for handling HTTP requests and responses, such as model binding, validation, and formatting.
     public class CategoriesController : ControllerBase
     {
-        public readonly ICategoryService _categoryService;
+        private readonly ICategoryService _categoryService;
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
