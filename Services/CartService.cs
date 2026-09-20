@@ -47,7 +47,7 @@ namespace EcommerceBackend.Services
                 {
                     ProductId = i.ProductId,
                     CartItemId = i.ProductId,
-                    ProductName = i.Product.ProductName,
+                    ProductName = i.Product!.ProductName,
                     Price = i.Product.ProductPrice,
                     Quantity = i.Quantity
                 }).ToList()
