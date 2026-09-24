@@ -14,7 +14,7 @@ namespace EcommerceBackend.Entities
         public decimal TotalAmount => CalculateTotal();
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-
+        public string ShippingAddress { get; set; } = string.Empty;
         public AppUser AppUser { get; set; } = new AppUser();
         public Order() { }
 
