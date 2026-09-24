@@ -77,7 +77,10 @@ builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericReposito
 // Register the ProductServices and CategoryService with the DI container
 builder.Services.AddScoped<IProductService, ProductServices>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
