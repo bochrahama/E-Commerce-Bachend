@@ -11,7 +11,7 @@ namespace EcommerceBackend.Entities
         public List<CartItem> Items { get; set; } = new List<CartItem>();
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-        public AppUser AppUser { get; set; } = new AppUser(); // Navigation property to the AppUser entity
+        public AppUser AppUser { get; set; } = null!; // Navigation property to the AppUser entity
 
         public Cart(){}
     }
