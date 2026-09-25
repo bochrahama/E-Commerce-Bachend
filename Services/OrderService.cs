@@ -77,6 +77,7 @@ namespace EcommerceBackend.Services
                 .Include(o => o.Items)
                 .ThenInclude(oi => oi.Product)
                 .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
             return orders.Select(MapToDto);
         }
@@ -96,6 +97,7 @@ namespace EcommerceBackend.Services
             OrderId = order.Id,
             OrderDate = order.CreatedAt.DateTime,
             Status = order.Status.ToString(),
+            ShippingAddress = order.ShippingAddress,
             Items = order.Items.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,
@@ -103,7 +105,7 @@ namespace EcommerceBackend.Services
                 Quantity = oi.Quantity,
                 UnitPrice = oi.UnitPrice
             }).ToList(),
-            ShippingAddress = order.ShippingAddress
+            
         };
     }
 }
