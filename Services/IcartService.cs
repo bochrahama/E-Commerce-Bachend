@@ -6,7 +6,7 @@ namespace EcommerceBackend.Services
     {
         
         Task<CartDto> GetCartAsync(string userId);
-        Task<CartDto> AddItemToCartAsync(string userId, CartItemDto cartItemDto);
+        Task<CartDto> AddItemAsync(string userId, CartItemDto cartItemDto);
         Task<bool> UpdateQuantityAsync(string userId, int CartItemId , int Quantity);
         Task<bool> RemoveItemFromCartAsync(string userId, int productId);
         Task ClearCartAsync(string userId);
