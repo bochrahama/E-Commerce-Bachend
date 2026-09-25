@@ -9,10 +9,10 @@ namespace EcommerceBackend.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class CartControllers : ControllerBase
+    public class CartController : ControllerBase
     {
         private readonly ICartService _service;
-        public CartControllers(ICartService service)
+        public CartController(ICartService service)
         {
             _service = service;
         }
@@ -27,7 +27,7 @@ namespace EcommerceBackend.Controllers
             try
             {
                 var cart =
-                await _service.AddItemToCartAsync(GetUserId(),
+                await _service.AddItemAsync(GetUserId(),
                 cartItemDto);
                 return Ok(cart);
 
