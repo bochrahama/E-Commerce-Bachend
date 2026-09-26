@@ -50,7 +50,7 @@ namespace EcommerceBackend.Controllers
                 return BadRequest();
             }
             var  updatedProduct = await _productService.UpdateAsync(product);
-            if (updatedProduct == null)
+            if (!updatedProduct )
             {
                 return NotFound();
             }
@@ -66,6 +66,29 @@ namespace EcommerceBackend.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+        [HttpPost("{id:int}/stock")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdjustStock (int id , StockAdjustmentDto dto)
+        {
+            var product = await _productService.GetByIdAsync(id);
+            if (product is null) return NotFound();
+            if (product.ProductQuantity + dto.Quantity < 0)
+            {
+                return BadRequest("cannot be negative");
+            }
+            product.ProductQuantity += dto.Quantity;
+
+            await _productService.UpdateAsync(product);
+            return Ok(new { product.ProductId, product.ProductQuantity, dto.Reason });
+        }
+        [HttpGet("low-stock")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetLowStock([FromQuery] int threshold = 5)
+        {
+            var products = await _productService.GetAllAsync(null, null, null, null);
+            var lowStock = products.Where(p => p.ProductQuantity <= threshold);
+            return Ok(lowStock);
         }
     }
 }
