@@ -5,6 +5,7 @@ namespace EcommerceBackend.Entities
 {
     public class Cart
     {
+
         public int CartId { get; private set; }
         // Identifier for the user who owns the cart
         public string UserId { get; set; } = String.Empty;

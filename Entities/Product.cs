@@ -1,9 +1,12 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace EcommerceBackend.Entities
 {
     public class Product
     {
         
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
         public int ProductId { get;  set; }
        
         public string ProductName { get; set; } = string.Empty;
