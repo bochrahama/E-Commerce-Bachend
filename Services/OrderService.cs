@@ -62,6 +62,14 @@ namespace EcommerceBackend.Services
                 await transaction.CommitAsync();
                 return MapToDto(oder);
              }
+            catch (DbUpdateConcurrencyException)
+            {
+                await transaction.RollbackAsync();
+
+                throw new InvalidOperationException(
+                    "Stock changed while processing your order. Please try again."
+                );
+            }
             catch
             {
                 await transaction.RollbackAsync();
