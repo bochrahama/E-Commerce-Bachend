@@ -1,7 +1,8 @@
 ﻿//build the service layer for the product entity, which will be used to handle business logic and interact with the repository layer. The service layer will provide methods for creating, reading, updating, and deleting products.
-using Microsoft.EntityFrameworkCore;
 using EcommerceBackend.Data;
+using EcommerceBackend.DTOs;
 using EcommerceBackend.Entities;
+using Microsoft.EntityFrameworkCore;
 namespace EcommerceBackend.Services
 {
     public class ProductServices : IProductService
@@ -12,6 +13,16 @@ namespace EcommerceBackend.Services
         {
             _context = context;
         }
+        private static ProductDto MapToDto(Product p) => new()
+        {
+            ProductId = p.ProductId,
+            ProductName = p.ProductName,
+            ProductDescription = p.ProductDescription,
+            ProductPrice = p.ProductPrice,
+            ProductQuantity = (decimal)p.ProductQuantity!,
+            CategoryName = p.ProductCategory?.Name ?? string.Empty,
+            ImageUrls = p.ProductImages.Select(i => i.Url).ToList()
+        };
         public async Task<IEnumerable<Product>> GetAllAsync(string? searchTerm , int? categoryId , decimal? minPrice , decimal? maxPrice )
         {
             var query = _context.Products
@@ -35,40 +46,53 @@ namespace EcommerceBackend.Services
             {
                 query = query.Where(p => p.ProductPrice <= maxPrice.Value);
             }
-            return await query.ToListAsync();
+            return await query.ToArrayAsync();
         }
         // the method below is used to get a product by its id and include its category and images
-        public async Task<Product?> GetByIdAsync(int id)
+        public async Task<ProductDto?> GetByIdAsync(int id)
         {
-            return await _context.Products
+           var product = await _context.Products
                 .Include(p => p.ProductCategory)
                 .Include(p => p.ProductImages)
                 // filter the product by its id and check if it is active
                 .FirstOrDefaultAsync(p => p.ProductId == id && p.ProductIsActive);
+            return MapToDto(product!);
         }
         //the method below is used to create a new product 
         // it takes a product object as a parameter and adds it to the database
-        public async Task<Product> CreatAsync(Product product)
+        public async Task<ProductDto> CreateAsync(ProductCreateDto dto)
         {
+            var product = new Product
+            {
+                ProductName = dto.ProductName,
+                ProductDescription = dto.ProductDescription,
+                ProductPrice = dto.ProductPrice,
+                ProductQuantity = dto.ProductQuantity,
+                ProductCategoryId = dto.ProductCategoryId,
+                ProductIsActive = true
+            };
+
             _context.Products.Add(product);
-            await _context.SaveChangesAsync();//save in database
-            return product;
+            await _context.SaveChangesAsync();
+
+            return MapToDto(product);
+        
         }
-        public async Task<bool> UpdateAsync(Product product)
+        public async Task<bool> UpdateAsync(int id, ProductCreateDto dto)
         {
             // find the existing product by its id by using the FindAsync method of the DbContext
-            var existingProduct = await _context.Products.FindAsync(product.ProductId);
+            var existingProduct = await _context.Products.FindAsync(dto);
             if (existingProduct == null || !existingProduct.ProductIsActive)
             {
                 return false;
             }
             // update the existing product with the new values
             // update the existing product with the new values
-            existingProduct.ProductName = product.ProductName;
-            existingProduct.ProductDescription = product.ProductDescription;
-            existingProduct.ProductPrice = product.ProductPrice;
-            existingProduct.ProductQuantity = product.ProductQuantity;
-            existingProduct.ProductCategoryId = product.ProductCategoryId;
+            existingProduct.ProductName = dto.ProductName;
+            existingProduct.ProductDescription = dto.ProductDescription;
+            existingProduct.ProductPrice = dto.ProductPrice;
+            existingProduct.ProductQuantity = dto.ProductQuantity;
+            existingProduct.ProductCategoryId = dto.ProductCategoryId;
             await _context.SaveChangesAsync();
             return true;
         }
