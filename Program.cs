@@ -73,6 +73,11 @@ builder.Services.AddSwaggerGen(options =>
             [new OpenApiSecuritySchemeReference("Bearer", document)] = []
         });
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>)) ;
 // Register the ProductServices and CategoryService with the DI container
 builder.Services.AddScoped<IProductService, ProductServices>();
@@ -82,7 +87,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddMemoryCache();
 var app = builder.Build();
-
+app.UseMiddleware<EcommerceBackend.Middleware.ExceptionHandlingMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

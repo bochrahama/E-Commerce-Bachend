@@ -64,11 +64,11 @@ namespace EcommerceBackend.Services
 
         public async Task<CartDto> AddItemAsync(string userId, CartItemDto cartItemDto)
         {
-            // 1. التأكد من وجود المنتج
+
             var product = await _context.Products.FindAsync(cartItemDto.ProductId)
                 ?? throw new InvalidOperationException("Product not found.");
 
-            // 2. جلب السلة مع عناصرها
+    
             var cart = await _context.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);

@@ -99,7 +99,7 @@ namespace EcommerceBackend.Services
                 .FirstOrDefaultAsync(o => o.UserId == userId && o.Id == orderId);
           return order != null ? MapToDto(order) : null;
         }
-        public static OrderDto MapToDto(Order order)
+        private static OrderDto MapToDto(Order order)
         => new OrderDto
         {
             OrderId = order.Id,
