@@ -36,20 +36,17 @@ namespace EcommerceBackend.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(ProductCreateDto dto) 
         {
-            var createdProduct = await _productService.CreatAsync(product);
-            return CreatedAtAction(nameof(GetById), new { id = createdProduct.ProductId }, createdProduct);
+            var createdProductDto = await _productService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = createdProductDto.ProductId }, createdProductDto);
         }
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, Product product)
+        public async Task<IActionResult> Update(int id, ProductCreateDto dto)
         {
-            if (id != product.ProductId)
-            {
-                return BadRequest();
-            }
-            var  updatedProduct = await _productService.UpdateAsync(product);
+  
+            var  updatedProduct = await _productService.UpdateAsync(id ,dto);
             if (!updatedProduct )
             {
                 return NotFound();
@@ -78,8 +75,9 @@ namespace EcommerceBackend.Controllers
                 return BadRequest("cannot be negative");
             }
             product.ProductQuantity += dto.Quantity;
+             
 
-            await _productService.UpdateAsync(product);
+            await _productService.ReduceStockAsync(id, dto.Quantity);
             return Ok(new { product.ProductId, product.ProductQuantity, dto.Reason });
         }
         [HttpGet("low-stock")]
@@ -90,5 +88,6 @@ namespace EcommerceBackend.Controllers
             var lowStock = products.Where(p => p.ProductQuantity <= threshold);
             return Ok(lowStock);
         }
+        
     }
 }
