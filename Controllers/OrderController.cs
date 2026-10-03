@@ -26,7 +26,7 @@ namespace EcommerceBackend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.ToString());
             }
         }
         [HttpGet]      

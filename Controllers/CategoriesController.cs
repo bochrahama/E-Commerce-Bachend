@@ -38,7 +38,7 @@ namespace EcommerceBackend.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create(CategoryCreateDto category)
         {
             var createdCategory = await _categoryService.CreateAsync(category);
             return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
@@ -46,14 +46,10 @@ namespace EcommerceBackend.Controllers
         [HttpPut("{id:int}")]
         //this method is used to update a category by its id
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, Category category)
+        public async Task<IActionResult> Update(int id, CategoryCreateDto category)
         {
-            if (id != category.Id)
-            {//if the id in the url does not match the id in the body, return a bad request response
-                //bad request response is a HTTP response status code that indicates that the server cannot process the request due to a client error, such as invalid syntax or missing parameters.
-                return BadRequest();
-            }
-            var updatedCategory = await _categoryService.UpdateAsync(category);
+            
+            var updatedCategory = await _categoryService.UpdateAsync(id, category);
             if (!updatedCategory)
             {
                 return NotFound();

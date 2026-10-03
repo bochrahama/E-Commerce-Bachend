@@ -12,7 +12,7 @@ namespace EcommerceBackend.Entities
         public decimal TotalPrice => UnitPrice * Quantity;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public Order? Order { get; set; } // Navigation property to the Order entity
-        public Product Product { get; set; } = new Product(); // Navigation property to the Product entity
+        public Product? Product { get; set; }  // Navigation property to the Product entity
   
 
         public OrderItem() { }

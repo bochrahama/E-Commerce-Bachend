@@ -40,7 +40,7 @@ namespace EcommerceBackend.Data
             Builder.Entity<OrderItem>()
                 .HasOne(b=>b.Order)
                 .WithMany(c => c.Items)
-                .HasForeignKey(b => b.Id);
+                .HasForeignKey(b => b.OrderId);
 
 
             Builder.Entity<Product>()
