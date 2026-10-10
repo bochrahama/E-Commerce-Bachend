@@ -53,7 +53,7 @@ namespace EcommerceBackend.Services
                 .Include(p => p.ProductImages)
                 // filter the product by its id and check if it is active
                 .FirstOrDefaultAsync(p => p.ProductId == id && p.ProductIsActive);
-            return MapToDto(product!);
+            return product is null ? null : MapToDto(product);
         }
         //the method below is used to create a new product 
         // it takes a product object as a parameter and adds it to the database
