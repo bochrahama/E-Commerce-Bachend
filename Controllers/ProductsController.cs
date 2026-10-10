@@ -16,10 +16,10 @@ namespace EcommerceBackend.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> GetAll(
-            [FromQuery] string? search ,
+            [FromQuery] string? search,
             [FromQuery] int? categoryId,
-            [FromQuery] decimal? minPrice ,
-            [FromQuery] decimal? maxPrice )
+            [FromQuery] decimal? minPrice,
+            [FromQuery] decimal? maxPrice)
         {
             var products = await _productService.GetAllAsync(search, categoryId, minPrice, maxPrice);
             return Ok(products);
@@ -36,7 +36,7 @@ namespace EcommerceBackend.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(ProductCreateDto dto) 
+        public async Task<IActionResult> Create(ProductCreateDto dto)
         {
             var createdProductDto = await _productService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = createdProductDto.ProductId }, createdProductDto);
@@ -45,9 +45,9 @@ namespace EcommerceBackend.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, ProductCreateDto dto)
         {
-  
-            var  updatedProduct = await _productService.UpdateAsync(id ,dto);
-            if (!updatedProduct )
+
+            var updatedProduct = await _productService.UpdateAsync(id, dto);
+            if (!updatedProduct)
             {
                 return NotFound();
             }
@@ -66,28 +66,24 @@ namespace EcommerceBackend.Controllers
         }
         [HttpPost("{id:int}/stock")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AdjustStock (int id , StockAdjustmentDto dto)
+        public async Task<IActionResult> AdjustStock(int id, StockAdjustmentDto dto)
         {
-            var product = await _productService.GetByIdAsync(id);
-            if (product is null) return NotFound();
-            if (product.ProductQuantity + dto.Quantity < 0)
+            try
             {
-                return BadRequest("cannot be negative");
+                var result = await _productService.AdjustStockAsync(id, dto.Quantity);
+                if (result is null) return NotFound();
+                return Ok(new { result.ProductId, result.ProductQuantity, dto.Reason });
             }
-            product.ProductQuantity += dto.Quantity;
-             
-
-            await _productService.ReduceStockAsync(id, dto.Quantity);
-            return Ok(new { product.ProductId, product.ProductQuantity, dto.Reason });
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
         [HttpGet("low-stock")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetLowStock([FromQuery] int threshold = 5)
-        {
-            var products = await _productService.GetAllAsync(null, null, null, null);
-            var lowStock = products.Where(p => p.ProductQuantity <= threshold);
-            return Ok(lowStock);
-        }
-        
+            => Ok(await _productService.GetLowStockAsync(threshold));
     }
 }
+
