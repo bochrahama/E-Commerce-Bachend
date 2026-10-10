@@ -1,7 +1,9 @@
-﻿//build the service layer for the product entity, which will be used to handle business logic and interact with the repository layer. The service layer will provide methods for creating, reading, updating, and deleting products.
+﻿//Update Product servise by adding a new method to get products with low stock and a method to adjust stock by a given delta. The AdjustStockAsync method will check if the resulting stock is negative and throw an exception if it is. The GetLowStockAsync method will return products that have a quantity less than or equal to a specified threshold.
 using EcommerceBackend.Data;
 using EcommerceBackend.DTOs;
 using EcommerceBackend.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace EcommerceBackend.Services
 {
@@ -23,30 +25,25 @@ namespace EcommerceBackend.Services
             CategoryName = p.ProductCategory?.Name ?? string.Empty,
             ImageUrls = p.ProductImages.Select(i => i.Url).ToList()
         };
-        public async Task<IEnumerable<Product>> GetAllAsync(string? searchTerm , int? categoryId , decimal? minPrice , decimal? maxPrice )
+        public async Task<IEnumerable<ProductDto>> GetAllAsync(string? search, int? categoryId, decimal? minPrice, decimal? maxPrice)
         {
             var query = _context.Products
-                .Include(p => p.ProductCategory)
-                .Include(p => p.ProductImages)
-                .Where(p => p.ProductIsActive)
-                .AsQueryable();
-             if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                query = query.Where(p => p.ProductName.Contains(searchTerm));
-            }
+        .Include(p => p.ProductCategory)
+        .Include(p => p.ProductImages)
+        .Where(p => p.ProductIsActive)
+        .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(p => p.ProductName.Contains(search));
             if (categoryId.HasValue)
-            {
-                query = query.Where(p => p.ProductCategoryId == categoryId.Value);
-            }
+                query = query.Where(p => p.ProductCategoryId == categoryId);
             if (minPrice.HasValue)
-            {
-                query = query.Where(p => p.ProductPrice >= minPrice.Value);
-            }
+                query = query.Where(p => p.ProductPrice >= minPrice);
             if (maxPrice.HasValue)
-            {
-                query = query.Where(p => p.ProductPrice <= maxPrice.Value);
-            }
-            return await query.ToArrayAsync();
+                query = query.Where(p => p.ProductPrice <= maxPrice);
+
+            var products = await query.ToListAsync();
+            return products.Select(MapToDto);
         }
         // the method below is used to get a product by its id and include its category and images
         public async Task<ProductDto?> GetByIdAsync(int id)
@@ -81,7 +78,7 @@ namespace EcommerceBackend.Services
         public async Task<bool> UpdateAsync(int id, ProductCreateDto dto)
         {
             // find the existing product by its id by using the FindAsync method of the DbContext
-            var existingProduct = await _context.Products.FindAsync(dto);
+            var existingProduct = await _context.Products.FindAsync(id);
             if (existingProduct == null || !existingProduct.ProductIsActive)
             {
                 return false;
@@ -121,5 +118,34 @@ namespace EcommerceBackend.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ProductDto?> AdjustStockAsync(int id, int delta)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductCategory)
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.ProductId == id && p.ProductIsActive);
+
+            if (product is null) return null;
+
+            if (product.ProductQuantity + delta < 0)
+                throw new InvalidOperationException("Resulting stock cannot be negative.");
+
+            product.ProductQuantity += delta;
+            await _context.SaveChangesAsync();
+            return MapToDto(product);
         }
+
+        public async Task<IEnumerable<ProductDto>> GetLowStockAsync(int threshold)
+        {
+            var products = await _context.Products
+                .Include(p => p.ProductCategory)
+                .Include(p => p.ProductImages)
+                .Where(p => p.ProductIsActive && p.ProductQuantity <= threshold)
+                .OrderBy(p => p.ProductQuantity)
+                .ToListAsync();
+
+            return products.Select(MapToDto);
+        }
+    }
 }
